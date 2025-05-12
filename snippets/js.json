@@ -1,0 +1,19 @@
+{
+    "Print to console debug": {
+        "prefix": "dlog",
+        "body": [
+            "console.log('dlog ==> $1', $2);",
+            "$3"
+        ],
+        "description": "Debug Log output to console with mark"
+    },
+    "JSDoc Comment": {
+        "prefix": "docc",
+        "body": [
+            "/**",
+            " * ${1:Description}",
+            " */"
+        ],
+        "description": "Generate a JSDoc comment block"
+    }
+}
