@@ -10,10 +10,14 @@ vim.opt.expandtab = true -- 使用空格代替制表符
 vim.opt.shiftwidth = 4 -- 每次缩进的空格数
 vim.opt.tabstop = 4 -- Tab 显示为 4 个空格
 vim.opt.softtabstop = 4 -- 按退格键时删除 4 个空格
+vim.opt.smartindent = true -- 智能缩进
+vim.opt.autoindent = true -- 自动继承上一行缩进
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "lua", "python", "typescript", "javascript", "dart" },
   callback = function()
+    vim.opt_local.smartindent = true
+    vim.opt_local.autoindent = true
     vim.opt_local.expandtab = true -- 使用空格代替制表符
     vim.opt_local.shiftwidth = 2 -- 每次缩进的空格数
     vim.opt_local.tabstop = 2 -- Tab 显示为 2 个空格
