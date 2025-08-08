@@ -104,24 +104,36 @@ return {
       },
 
       keymap = {
-        preset = "super-tab",
-        ["<C-y>"] = { "select_and_accept" },
-        ["<C-e>"] = { "cancel" },
-        ["<CR>"] = { "cancel", "fallback" },
-        -- ["<C-l>"] = { "hide", "accept_and_enter", "fallback" },
-        -- ["<Tab>"] = { "snippet_forward", "fallback" },
-        -- ["<S-Tab>"] = { "snippet_backward", "fallback" },
-
-        -- ["<Up>"] = { "select_prev", "fallback" },
-        -- ["<Down>"] = { "select_next", "fallback" },
-        -- ["<C-p>"] = { "select_prev", "fallback" },
-        -- ["<C-n>"] = { "select_next", "fallback" },
-        --
-        -- ["<C-u>"] = { "scroll_documentation_up", "fallback" },
-        -- ["<C-d>"] = { "scroll_documentation_down", "fallback" },
-        --
-        ["<C-x>"] = { "show", "show_documentation", "hide_documentation" },
+        ["<Tab>"] = {
+          require("blink.cmp.keymap.presets").get("super-tab")["<Tab>"][1],
+          LazyVim.cmp.map({ "snippet_forward", "ai_accept" }),
+          "fallback",
+        },
+        ["<c-y>"] = { "select_and_accept" },
+        ["<c-e>"] = { "cancel" },
+        ["<cr>"] = { "cancel", "fallback" },
+        ["<c-x>"] = { "show", "show_documentation", "hide_documentation" },
       },
+
+      -- keymap = {
+      --   preset = "super-tab",
+      --   ["<c-y>"] = { "select_and_accept" },
+      --   ["<c-e>"] = { "cancel" },
+      --   ["<cr>"] = { "cancel", "fallback" },
+      --   -- ["<c-l>"] = { "hide", "accept_and_enter", "fallback" },
+      --   -- ["<tab>"] = { "snippet_forward", "fallback" },
+      --   -- ["<s-tab>"] = { "snippet_backward", "fallback" },
+      --
+      --   -- ["<up>"] = { "select_prev", "fallback" },
+      --   -- ["<down>"] = { "select_next", "fallback" },
+      --   -- ["<c-p>"] = { "select_prev", "fallback" },
+      --   -- ["<c-n>"] = { "select_next", "fallback" },
+      --   --
+      --   -- ["<c-u>"] = { "scroll_documentation_up", "fallback" },
+      --   -- ["<c-d>"] = { "scroll_documentation_down", "fallback" },
+      --   --
+      --   ["<c-x>"] = { "show", "show_documentation", "hide_documentation" },
+      -- },
     },
     ---@param opts blink.cmp.Config | { sources: { compat: string[] } }
     config = function(_, opts)

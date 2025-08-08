@@ -1,9 +1,10 @@
 -- bootstrap lazy.nvim, LazyVim and your plugins
 require("config.lazy")
 
+local map = vim.keymap.set
+
 if vim.g.vscode then
   -- VSCode extension
-  local map = vim.keymap.set
   map("n", "<leader>cf", "<Cmd>lua require('vscode').call('editor.action.formatDocument')</CR>", { desc = "Format" })
   map("v", "<leader>cf", "<Cmd>lua require('vscode').call('editor.action.formatSelection')<CR>", { desc = "Format" })
   map("n", "<leader>cr", "<Cmd>lua require('vscode').call('editor.action.rename')<CR>", { desc = "Rename" })
@@ -27,9 +28,9 @@ if vim.g.vscode then
   )
 else
   -- ordinary Neovim
-  require("catppuccin").load("macchiato")
+  -- require("catppuccin").load("macchiato")
 
-  require("lspconfig").protols.setup({})
+  -- require("lspconfig").protols.setup({})
 end
 -- function Transparent(color)
 --   color = color or "tokyonight"
@@ -38,4 +39,5 @@ end
 --   vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 -- end
 -- Transparent()
+--
 --

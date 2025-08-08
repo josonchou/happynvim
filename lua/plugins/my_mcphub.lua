@@ -23,7 +23,6 @@ return {
     --     },
     --   },
     -- },
-    
     config = function()
       require("mcphub").setup({
         port = 37373, -- Default port for MCP Hub

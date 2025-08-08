@@ -14,7 +14,7 @@ vim.opt.smartindent = true -- 智能缩进
 vim.opt.autoindent = true -- 自动继承上一行缩进
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "lua", "python", "typescript", "javascript", "dart" },
+  pattern = { "lua", "python", "typescript", "javascript", "javascriptreact", "typescriptreact", "dart" },
   callback = function()
     vim.opt_local.smartindent = true
     vim.opt_local.autoindent = true
@@ -25,18 +25,55 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Helper function for transparency formatting
-local alpha = function()
-  return string.format("%x", math.floor((255 * vim.g.transparency) or 0.8))
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "less" },
+  callback = function()
+    vim.treesitter.language.register("css", "less")
+  end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = {
+    "javascript",
+    "javascriptreact",
+    "javascript.jsx",
+    "typescript",
+    "typescriptreact",
+    "typescript.tsx",
+  },
+  callback = function()
+    vim.b.autoformat = false
+    local map = vim.keymap.set
+
+    map({ "n", "i", "t", "x", "v" }, "<D-F>", "<Cmd>TTSFixAndFormat<cr>", {
+      noremap = true,
+      silent = true,
+      desc = "Format ts code and auto fix by eslint",
+    })
+
+    -- map({ "n", "i", "t", "x", "v" }, "<C-F>", "<Cmd>TTSFixAndFormat<cr>", {
+    --   noremap = true,
+    --   silent = true,
+    --   desc = "Format ts code and auto fix by eslint",
+    -- })
+  end,
+})
+
+local guessDir = vim.fn.argv(0)
+
+-- 检查目录是否合法，不合法则使用默认目录
+local function is_valid_directory(path)
+  return vim.fn.isdirectory(path) == 1
 end
 
-vim.g.transparency = 0.8
+if not is_valid_directory(guessDir) then
+  guessDir = vim.fn.expand("$HOME/Workspace/")
+end
 
 if vim.g.neovide then
   -- g:neovide_opacity should be 0 if you want to unify transparency of content and title bar.
   vim.g.neovide_opacity = 0.8
   vim.g.neovide_normal_opacity = 0.8
-  vim.g.transparency = 0.9
   -- vim.g.neovide_background_color = "#0f1117" .. alpha()
 
   -- vim.g.neovide_title_background_color =
@@ -54,4 +91,40 @@ if vim.g.neovide then
   vim.g.neovide_light_angle_degrees = 45
   vim.g.neovide_light_radius = 5
   vim.g.neovide_macos_simple_fullscreen = true
+
+  vim.defer_fn(function()
+    vim.cmd("NeovideFocus")
+  end, 25)
+else
 end
+
+vim.api.nvim_create_autocmd("TabNew", {
+  pattern = "*",
+  callback = function(args)
+    local file_path = args.file or args.match
+    -- -- 获取当前标签页的窗口 ID
+    -- local win_id = vim.api.nvim_tabpage_get_win(0)
+    -- local buf_id = vim.api.nvim_win_get_buf(win_id)
+    -- local file_path = vim.api.nvim_buf_get_name(buf_id)
+    -- print(vim.inspect(args))
+    --
+    -- vim.notify("After TabNew" .. args.data.win_id)
+
+    -- 检查路径是否为目录（如 ~/dir）
+    if vim.fn.isdirectory(file_path) == 1 then
+      vim.cmd("tcd " .. file_path) -- 切换到目标目录
+    else
+      vim.cmd("tcd " .. guessDir) -- 切换到目标目录
+    end
+  end,
+})
+
+vim.cmd("tcd " .. guessDir)
+vim.notify("Hi, nvim is auto cd to " .. guessDir)
+
+local random = math.random(1000, 9999)
+
+vim.g.default_tab_id = vim.api.nvim_get_current_tabpage()
+vim.g.matina_guess_dir = guessDir
+
+vim.g.unique_instance_id = string.format("%d-%d", os.time(), random)
