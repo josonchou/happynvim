@@ -1,16 +1,16 @@
 {
-    "name": "personal-snippets",
-    "contributes": {
-        "snippets": [
-            {
-                "language": [
-                    "javascript",
-                    "typescript",
-                    "javascriptreact",
-                    "typescriptreact"
-                ],
-                "path": "./js.json"
-            }
-        ]
-    }
+  "name": "personal-snippets",
+  "contributes": {
+    "snippets": [
+      {
+        "language": [
+          "javascript",
+          "typescript",
+          "javascriptreact",
+          "typescriptreact"
+        ],
+        "path": "./js.json"
+      }
+    ]
+  }
 }

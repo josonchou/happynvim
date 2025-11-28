@@ -1,8 +1,6 @@
 return {
   {
     "mason-org/mason.nvim",
-    -- version = "^2.0.0",
-    version = "^1.11.0",
     opts = function(_, opts)
       opts.ensure_installed = opts.ensure_installed or {}
 
@@ -21,12 +19,13 @@ return {
         "css-lsp",
         "ast-grep",
         "dockerfile-language-server",
+        "eslint_d",
         -- "markdownlint",
         "prettier",
         -- "biome",
         "protols",
 
-        -- "js-debug-adapter",
+        "js-debug-adapter",
 
         "goimports",
         "gofumpt",
@@ -39,5 +38,5 @@ return {
       opts.automatic_installation = true
     end,
   },
-  { "mason-org/mason-lspconfig.nvim", version = "^1.11.0" },
+  { "mason-org/mason-lspconfig.nvim" },
 }

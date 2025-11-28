@@ -32,7 +32,10 @@ return {
         vim.api.nvim_create_user_command("TTSFixAndFormat", function()
           LazyVim.format({ force = true })
           vim.cmd("TSToolsFixAll")
-          vim.cmd("EslintFixAll") -- 再执行 ESLint 修复
+          -- 检查 EslintFixAll 命令是否存在
+          if vim.fn.exists(":EslintFixAll") > 0 then
+            vim.cmd("EslintFixAll") -- 再执行 ESLint 修复
+          end
         end, {})
 
         -- vim.api.nvim_create_autocmd("BufWritePre", {
@@ -56,7 +59,17 @@ return {
         --   { 80006 }
         -- ),
       },
+      -- 每个项目独立进程
+      root_dir = require("lspconfig.util").root_pattern("package.json", "tsconfig.json", "jsconfig.json", ".git"),
       settings = {
+        -- 明确告诉 tsserver 不要插手格式化
+        tsserver_format_options = { allowIncompleteCompletions = false },
+        tsserver_file_preferences = {
+          -- all | none | literals
+          includeInlayParameterNameHints = "none",
+        },
+        -- 使用vscode 的tsserver
+        tsserver_path = "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/node_modules/typescript/lib/tsserver.js",
         -- spawn additional tsserver instance to calculate diagnostics on it
         separate_diagnostic_server = true,
         -- "change"|"insert_leave" determine when the client asks the server about diagnostic
@@ -74,7 +87,8 @@ return {
         },
         -- string|nil - specify a custom path to `tsserver.js` file, if this is nil or file under path
         -- not exists then standard path resolution strategy is applied
-        tsserver_path = "/Users/joson/Library/Application Support/fnm/node-versions/v22.18.0/installation/lib/node_modules/typescript/bin",
+        -- tsserver_path = nil,
+        -- tsserver_path = "/Users/joson/Library/Application Support/fnm/node-versions/v22.18.0/installation/lib/node_modules/typescript/bin",
         -- specify a list of plugins to load by tsserver, e.g., for support `styled-components`
         -- (see 💅 `styled-components` support section)
         tsserver_plugins = {

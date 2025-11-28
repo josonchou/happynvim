@@ -14,6 +14,13 @@ return {
         },
         {
           filter = {
+            find = "dartls:[%s]+-32007:",
+          },
+          view = false,
+          -- opts = { skip = true },
+        },
+        {
+          filter = {
             find = "Format[%s]+request[%s]+failed",
           },
           view = "mini",

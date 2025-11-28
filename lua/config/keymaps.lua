@@ -11,17 +11,17 @@ local map = vim.keymap.set
 -- end, { desc = "which_key_ignore" })
 
 -- map("t", "<leader>B", "<cmd>close<cr>", { desc = "which_key_ignore" })
-map("i", "jj", "<Esc>", { desc = "quick escape" })
+-- map("i", "jj", "<Esc>", { desc = "quick escape" })
 
 map("i", "<M-j>", "<Down>", { desc = "Down" })
 map("i", "<M-k>", "<Up>", { desc = "Up" })
 map("i", "<M-h>", "<Left>", { desc = "Left" })
 map("i", "<M-l>", "<Right>", { desc = "Right" })
 
-map("i", "<M-Left>", "<Cmd>vertical resize -2<CR>", { desc = "Decrease Window Width" })
-map("i", "<M-Right>", "<Cmd>vertical resize +2<CR>", { desc = "Increase Window Width" })
-map("i", "<M-Up>", "<Cmd>resize +2<CR>", { desc = "Increase Window Height" })
-map("i", "<M-Down>", "<Cmd>resize -2<CR>", { desc = "Decrease Window Height" })
+map({ "n", "i", "x", "t", "v" }, "<C-M-Left>", "<Cmd>vertical resize -2<CR>", { desc = "Decrease Window Width" })
+map({ "n", "i", "x", "t", "v" }, "<C-M-Right>", "<Cmd>vertical resize +2<CR>", { desc = "Increase Window Width" })
+map({ "n", "i", "x", "t", "v" }, "<C-M-Up>", "<Cmd>resize +2<CR>", { desc = "Increase Window Height" })
+map({ "n", "i", "x", "t", "v" }, "<C-M-Down>", "<Cmd>resize -2<CR>", { desc = "Decrease Window Height" })
 
 map({ "n", "i" }, "<D-s>", ":w<CR>")
 
@@ -34,8 +34,14 @@ map({ "x", "v" }, "<D-c>", '"+y')
 -- cut
 map({ "x", "v" }, "<D-x>", '"+d')
 
-map({ "n", "i", "t", "x", "v" }, "<D-F>", function()
+map({ "n", "i", "t", "x", "v" }, "<M-F>", function()
   LazyVim.format({ force = true })
+
+  vim.defer_fn(function()
+    if vim.fn.exists(":EslintFixAll") > 0 then
+      vim.cmd("EslintFixAll") -- 再执行 ESLint 修复
+    end
+  end, 300)
 end, {
   noremap = true,
   silent = true,
@@ -81,7 +87,7 @@ local function toggleTerminal(id)
 end
 
 if vim.g.neovide then
-  vim.keymap.set({ "n", "i", "t", "v" }, "<D-v>", function()
+  vim.keymap.set({ "n", "i", "t", "v", "c" }, "<D-v>", function()
     vim.api.nvim_paste(vim.fn.getreg("+"), true, -1)
   end, { noremap = true, silent = true })
 end
@@ -190,11 +196,18 @@ else
 
   map("t", "<C-t>", "<Cmd>close<CR>", { desc = "Hide Terminal" })
 
-  map("n", "<C-=>", "<Cmd>AvanteToggle<CR>", { desc = "avante: toggle" })
-  map("i", "<C-=>", "<Cmd>AvanteToggle<CR>", { desc = "avante: toggle" })
-  map("t", "<C-=>", "<Cmd>AvanteToggle<CR>", { desc = "avante: toggle" })
+  -- map("n", "<C-=>", "<Cmd>AvanteToggle<CR>", { desc = "Avante: toggle" })
+  -- map("i", "<C-=>", "<Cmd>AvanteToggle<CR>", { desc = "Avante: toggle" })
+  -- map("t", "<C-=>", "<Cmd>AvanteToggle<CR>", { desc = "Avante: toggle" })
 
-  map("n", "<leader>ad", "<Cmd>AvanteClear<CR>", { desc = "avante: clear the chat history" })
+  -- map("n", "<leader>ad", "<Cmd>AvanteClear<CR>", { desc = "avante: clear the chat history" })
+  map({ "n", "x" }, "g.", "<Cmd>GoCodeAction<CR>", { desc = "Open the code actions menu" })
+  map({ "n", "x" }, "gh", function()
+    vim.lsp.buf.hover()
+  end, { desc = "Hover" })
+
+  -- map("v", "<leader>ae", "<Cmd>AvanteEdit<CR>", { desc = "avante: edit selected block" })
+  -- map("v", "<leader>aa", "<Cmd>AvanteAsk<CR>", { desc = "avante: ask selected block" })
 end
 
 -- map("t", "vv", "<Esc>", { desc = "quick escape in terminal" })

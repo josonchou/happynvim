@@ -45,7 +45,20 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.b.autoformat = false
     local map = vim.keymap.set
 
-    map({ "n", "i", "t", "x", "v" }, "<D-F>", "<Cmd>TTSFixAndFormat<cr>", {
+    map({ "n", "i", "t", "x", "v" }, "<M-F>", function()
+      LazyVim.format({ force = true })
+      LazyVim.lsp.action["source.fixAll.ts"]()
+      -- 检查 EslintFixAll 命令是否存在
+      -- if vim.fn.exists(":EslintFixAll") > 0 then
+      --   vim.cmd("EslintFixAll") -- 再执行 ESLint 修复
+      -- end
+
+      vim.defer_fn(function()
+        if vim.fn.exists(":EslintFixAll") > 0 then
+          vim.cmd("EslintFixAll") -- 再执行 ESLint 修复
+        end
+      end, 300)
+    end, {
       noremap = true,
       silent = true,
       desc = "Format ts code and auto fix by eslint",
@@ -70,57 +83,32 @@ if not is_valid_directory(guessDir) then
   guessDir = vim.fn.expand("$HOME/Workspace/")
 end
 
-if vim.g.neovide then
-  -- g:neovide_opacity should be 0 if you want to unify transparency of content and title bar.
-  vim.g.neovide_opacity = 0.8
-  vim.g.neovide_normal_opacity = 0.8
-  -- vim.g.neovide_background_color = "#0f1117" .. alpha()
-
-  -- vim.g.neovide_title_background_color =
-  -- string.format("%x", vim.api.nvim_get_hl(0, { id = vim.api.nvim_get_hl_id_by_name("Normal") }).bg)
-
-  -- vim.g.neovide_title_text_color = "pink"
-
-  vim.g.neovide_window_blurred = true
-
-  vim.g.neovide_floating_blur_amount_x = 2.0
-  vim.g.neovide_floating_blur_amount_y = 2.0
-
-  vim.g.neovide_floating_shadow = true
-  vim.g.neovide_floating_z_height = 10
-  vim.g.neovide_light_angle_degrees = 45
-  vim.g.neovide_light_radius = 5
-  vim.g.neovide_macos_simple_fullscreen = true
-
-  vim.defer_fn(function()
-    vim.cmd("NeovideFocus")
-  end, 25)
+if vim.g.vscode then
 else
+  vim.cmd("tcd " .. guessDir)
+  vim.notify("Nvim is auto cd to " .. guessDir)
+
+  vim.api.nvim_create_autocmd("TabNew", {
+    pattern = "*",
+    callback = function(args)
+      local file_path = args.file or args.match
+      -- -- 获取当前标签页的窗口 ID
+      -- local win_id = vim.api.nvim_tabpage_get_win(0)
+      -- local buf_id = vim.api.nvim_win_get_buf(win_id)
+      -- local file_path = vim.api.nvim_buf_get_name(buf_id)
+      -- print(vim.inspect(args))
+      --
+      -- vim.notify("After TabNew" .. args.data.win_id)
+
+      -- 检查路径是否为目录（如 ~/dir）
+      if vim.fn.isdirectory(file_path) == 1 then
+        vim.cmd("tcd " .. file_path) -- 切换到目标目录
+      else
+        vim.cmd("tcd " .. guessDir) -- 切换到目标目录
+      end
+    end,
+  })
 end
-
-vim.api.nvim_create_autocmd("TabNew", {
-  pattern = "*",
-  callback = function(args)
-    local file_path = args.file or args.match
-    -- -- 获取当前标签页的窗口 ID
-    -- local win_id = vim.api.nvim_tabpage_get_win(0)
-    -- local buf_id = vim.api.nvim_win_get_buf(win_id)
-    -- local file_path = vim.api.nvim_buf_get_name(buf_id)
-    -- print(vim.inspect(args))
-    --
-    -- vim.notify("After TabNew" .. args.data.win_id)
-
-    -- 检查路径是否为目录（如 ~/dir）
-    if vim.fn.isdirectory(file_path) == 1 then
-      vim.cmd("tcd " .. file_path) -- 切换到目标目录
-    else
-      vim.cmd("tcd " .. guessDir) -- 切换到目标目录
-    end
-  end,
-})
-
-vim.cmd("tcd " .. guessDir)
-vim.notify("Hi, nvim is auto cd to " .. guessDir)
 
 local random = math.random(1000, 9999)
 
