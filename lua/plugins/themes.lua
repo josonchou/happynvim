@@ -2,6 +2,41 @@ return {
   {
     "snacks.nvim",
     opts = {
+      -- explorer = {
+      --   auto_close = true,
+      --   -- layout = {
+      --   --   layout = { posotion = "right" },
+      --   -- },
+      -- },
+      picker = {
+        sources = {
+          explorer = {
+            auto_close = true,
+            hidden = true,
+            ignored = true,
+            layout = {
+              preset = "telescope",
+              reverse = false,
+              -- preset = "dropdown",
+              preview = true,
+              layout = {
+                height = 0.96,
+                width = 0.9,
+              },
+            },
+          },
+          files = {
+            hidden = true,
+            ignored = true,
+            exclude = { ".git", "node_modules", "dist", "build" },
+          },
+          grep = {
+            hidden = true,
+            -- ignored = true,
+            exclude = { ".git", "node_modules", "dist", "build" },
+          },
+        },
+      },
       dashboard = {
         preset = {
           pick = function(cmd, opts)

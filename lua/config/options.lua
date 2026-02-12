@@ -1,9 +1,13 @@
 -- Options are automatically loaded before lazy.nvim startup
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
-vim.g.lazyvim_picker = "snacks"
+-- vim.g.lazyvim_picker = "fzf"
 
 vim.g.ai_cmp = true
+
+-- vim.opt.fileformats = "unix,dos,mac"
+vim.opt.fileformat = "unix"
+vim.opt.fileformats = { "unix", "dos", "mac" }
 -- vim.g.lazyvim_blink_main = true
 
 vim.g.neovide_input_macos_option_key_is_meta = "only_left"
@@ -16,6 +20,7 @@ vim.opt.laststatus = 3
 vim.g.root_spec = { { ".git", "lua" }, "lsp", "cwd" }
 
 if vim.g.neovide then
+  vim.g.neovide_padding_top = 20
   -- g:neovide_opacity should be 0 if you want to unify transparency of content and title bar.
   vim.g.neovide_theme = "auto"
   vim.g.neovide_opacity = 0.8
@@ -32,3 +37,15 @@ if vim.g.neovide then
   vim.g.neovide_light_radius = 5
 else
 end
+
+vim.opt.title = true
+vim.opt.titlestring = "SuperCoder: %{getcwd()}"
+
+vim.opt.fixendofline = true
+
+-- function _G.statusLine()
+--   return vim.g.flutter_tools_decorations.device
+-- end
+--
+-- vim.opt.statusline = "%!v:statusLine()"
+--

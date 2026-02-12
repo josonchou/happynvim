@@ -48,53 +48,63 @@ return {
     {
       "nvim-treesitter/nvim-treesitter",
       opts = function(_, opts)
-        local function add(lang)
-          if type(opts.ensure_installed) == "table" then
-            table.insert(opts.ensure_installed, lang)
+        if vim.g.vscode then
+        -- pass
+        else
+          local function add(lang)
+            if type(opts.ensure_installed) == "table" then
+              table.insert(opts.ensure_installed, lang)
+            end
           end
+          vim.list_extend(opts.ensure_installed, {
+            "bash",
+            "html",
+            "javascript",
+            "json",
+            "lua",
+            "markdown",
+            "markdown_inline",
+            "python",
+            "query",
+            "regex",
+            "tsx",
+            "typescript",
+            "vim",
+            "yaml",
+            "css",
+            "vue",
+            "go",
+            "scss",
+            "less",
+            "gomod",
+            "gowork",
+            "dart",
+            "gosum",
+            "jsdoc",
+            "git_config",
+            "gitcommit",
+            "git_rebase",
+            "gitignore",
+            "gitattributes",
+          })
+
+          vim.filetype.add({
+            extension = { rasi = "rasi", rofi = "rasi", wofi = "rasi" },
+            filename = {
+              ["vifmrc"] = "vim",
+            },
+            pattern = {
+              [".*/waybar/config"] = "jsonc",
+              [".*/mako/config"] = "dosini",
+              [".*/kitty/.+%.conf"] = "kitty",
+              [".*/hypr/.+%.conf"] = "hyprlang",
+              ["%.env%.[%w_.-]+"] = "sh",
+            },
+          })
+          vim.treesitter.language.register("bash", "kitty")
+
+          add("git_config")
         end
-        vim.list_extend(opts.ensure_installed, {
-          "bash",
-          "html",
-          "javascript",
-          "json",
-          "lua",
-          "markdown",
-          "markdown_inline",
-          "python",
-          "query",
-          "regex",
-          "tsx",
-          "typescript",
-          "vim",
-          "yaml",
-          "css",
-          "vue",
-          "go",
-          "scss",
-          "css",
-          "gomod",
-          "gowork",
-          "dart",
-          "gosum",
-        })
-
-        vim.filetype.add({
-          extension = { rasi = "rasi", rofi = "rasi", wofi = "rasi" },
-          filename = {
-            ["vifmrc"] = "vim",
-          },
-          pattern = {
-            [".*/waybar/config"] = "jsonc",
-            [".*/mako/config"] = "dosini",
-            [".*/kitty/.+%.conf"] = "kitty",
-            [".*/hypr/.+%.conf"] = "hyprlang",
-            ["%.env%.[%w_.-]+"] = "sh",
-          },
-        })
-        vim.treesitter.language.register("bash", "kitty")
-
-        add("git_config")
       end,
     },
 
@@ -118,51 +128,51 @@ return {
       },
     },
   },
-  {
-    "sphamba/smear-cursor.nvim",
-    event = "VeryLazy",
-    cond = vim.g.neovide == nil and vim.env.TERM_PROGRAM ~= "ghostty",
-  },
-  {
-    "akinsho/bufferline.nvim",
-    opts = {
-      options = {
-        -- mode = "tabs",
-        always_show_bufferline = true,
-        show_tab_indicators = true,
-        style_preset = require("bufferline").style_preset.minimal,
-
-        -- separator styles: slant, padded_slant, slope, padded_slope, thick, thin
-        separator_style = { " ", " " },
-
-        indicator = {
-          style = "underline",
-          -- Custom indicator color
-          color = "#60A5FA", -- blue-400 for active indicator
-        },
-
-        color_icons = true,
-
-        -- Better buffer ordering
-        sort_by = "insert_after_current",
-
-        -- Enhanced buffer styling
-        diagnostics = "nvim_lsp",
-        diagnostics_indicator = function(count, level, diagnostics_dict, context)
-          local icon = level:match("error") and " " or " "
-          return " " .. icon .. count
-        end,
-
-        -- Custom buffer name formatting
-        name_formatter = function(buf)
-          -- Remove directory path and show only filename
-          local name = buf.name
-          if name and name:match(".*[/\\]") then
-            name = name:match("([^/\\]+)$")
-          end
-          return name
-        end,
-      },
-    },
-  },
+  -- {
+  --   "sphamba/smear-cursor.nvim",
+  --   event = "VeryLazy",
+  --   cond = vim.g.neovide == nil and vim.env.TERM_PROGRAM ~= "ghostty",
+  -- },
+  -- {
+  --   "akinsho/bufferline.nvim",
+  --   opts = {
+  --     options = {
+  --       -- mode = "tabs",
+  --       always_show_bufferline = true,
+  --       show_tab_indicators = true,
+  --       style_preset = require("bufferline").style_preset.minimal,
+  --
+  --       -- separator styles: slant, padded_slant, slope, padded_slope, thick, thin
+  --       separator_style = { " ", " " },
+  --
+  --       indicator = {
+  --         style = "underline",
+  --         -- Custom indicator color
+  --         color = "#60A5FA", -- blue-400 for active indicator
+  --       },
+  --
+  --       color_icons = true,
+  --
+  --       -- Better buffer ordering
+  --       sort_by = "insert_after_current",
+  --
+  --       -- Enhanced buffer styling
+  --       diagnostics = "nvim_lsp",
+  --       diagnostics_indicator = function(count, level, diagnostics_dict, context)
+  --         local icon = level:match("error") and " " or " "
+  --         return " " .. icon .. count
+  --       end,
+  --
+  --       -- Custom buffer name formatting
+  --       name_formatter = function(buf)
+  --         -- Remove directory path and show only filename
+  --         local name = buf.name
+  --         if name and name:match(".*[/\\]") then
+  --           name = name:match("([^/\\]+)$")
+  --         end
+  --         return name
+  --       end,
+  --     },
+  --   },
+  -- },
 }

@@ -33,6 +33,7 @@ return {
         "impl",
         "gopls",
         "delve",
+        -- "gitui",
       })
 
       opts.automatic_installation = true

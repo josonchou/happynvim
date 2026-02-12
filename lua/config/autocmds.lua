@@ -72,21 +72,134 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
-local guessDir = vim.fn.argv(0)
+local function createMatinaApi()
+  _G.matinaCodeState = {
+    superCodeId = "",
+    defaultTabId = "",
+    rootDir = "",
+    counter = 0,
+    terms = {},
+  }
 
--- 检查目录是否合法，不合法则使用默认目录
-local function is_valid_directory(path)
-  return vim.fn.isdirectory(path) == 1
+  local state = _G.matinaCodeState
+
+  local matinaApi = {}
+
+  function matinaApi:getState()
+    return state
+  end
+
+  function matinaApi:isValidDirectory(path)
+    return vim.fn.isdirectory(path) == 1
+  end
+
+  function matinaApi:getTermArgs()
+    local tabId = vim.api.nvim_get_current_tabpage()
+    local guessDir = state.rootDir
+    local id = state.superCodeId or state.rootDir or "$HOME/Workspace/"
+
+    if tabId ~= state.defaultTabId then
+      guessDir = vim.fn.getcwd()
+    end
+
+    local isDir = vim.fn.isdirectory(guessDir) == 1
+    if not isDir then
+      guessDir = vim.fn.expand("$HOME/Workspace/")
+    end
+
+    return guessDir, id, tabId
+  end
+
+  function matinaApi:init()
+    state.rootDir = vim.fn.argv(0)
+    -- 检查目录是否合法，不合法则使用默认目录
+    if not self:isValidDirectory(state.rootDir) then
+      state.rootDir = vim.fn.expand("$HOME/Workspace/")
+    end
+    local random = math.random(1000, 9999)
+    state.defaultTabId = vim.api.nvim_get_current_tabpage()
+    state.superCodeId = string.format("%d-%d", os.time(), random)
+  end
+
+  function matinaApi:setRootDir(path)
+    if not self:isValidDirectory(path) then
+      state.rootDir = vim.fn.expand("$HOME/Workspace/")
+    else
+      state.rootDir = path
+    end
+  end
+
+  function matinaApi:termLen()
+    local len = 0
+    for _ in pairs(state.terms) do
+      len = len + 1
+    end
+    return len
+  end
+
+  function matinaApi:hideAllTerm()
+    for _, termArgs in pairs(state.terms) do
+      local term = Snacks.terminal.get(termArgs.cmd or nil, termArgs.opts)
+      if term ~= nil then
+        term:hide()
+      end
+    end
+  end
+
+  function matinaApi:toggleTerminal(id, cmd)
+    local dir, uniqueId, tabId = self:getTermArgs()
+    local terms = state.terms
+    local size = self:termLen()
+    local termId = string.format("%s-%s-%s", tabId, id, uniqueId)
+
+    if terms[termId] ~= nil then
+      local currTerm = terms[termId]
+      Snacks.terminal(currTerm.cmd or nil, currTerm.opts)
+      return
+    end
+
+    local termArgs = {
+      cmd = cmd or nil,
+      opts = {
+        cwd = dir,
+        count = size + 1,
+        win = {
+          border = "double",
+        },
+        env = {
+          nvim_instance_id = uniqueId,
+          nvim_term_id = termId,
+        },
+      },
+    }
+
+    terms[termId] = termArgs
+    Snacks.terminal(termArgs.cmd or nil, termArgs.opts)
+  end
+
+  matinaApi:init()
+  vim.g.matinaApi = matinaApi
+
+  return matinaApi, state
 end
 
-if not is_valid_directory(guessDir) then
-  guessDir = vim.fn.expand("$HOME/Workspace/")
-end
+local matinaApi, matinaState = createMatinaApi()
 
 if vim.g.vscode then
 else
-  vim.cmd("tcd " .. guessDir)
-  vim.notify("Nvim is auto cd to " .. guessDir)
+  vim.cmd("cd " .. matinaState.rootDir)
+
+  vim.api.nvim_create_autocmd("DirChanged", {
+    pattern = "*",
+    callback = function(args)
+      local scope = args.match
+      local new_dir = vim.fn.getcwd()
+      vim.notify("SuperCoder is cd to :" .. scope .. "->" .. new_dir)
+      if scope == "global" then
+        matinaApi:setRootDir(new_dir)
+      end
+    end,
+  })
 
   vim.api.nvim_create_autocmd("TabNew", {
     pattern = "*",
@@ -104,15 +217,40 @@ else
       if vim.fn.isdirectory(file_path) == 1 then
         vim.cmd("tcd " .. file_path) -- 切换到目标目录
       else
-        vim.cmd("tcd " .. guessDir) -- 切换到目标目录
+        vim.cmd("tcd " .. matinaState.rootDir) -- 切换到目标目录
       end
     end,
   })
 end
 
-local random = math.random(1000, 9999)
+local function is_dart_project()
+  -- Check for pubspec.yaml in the current directory or parent directories
+  local function find_pubspec(path)
+    if vim.fn.filereadable(path .. "/pubspec.yaml") == 1 then
+      return true
+    end
 
-vim.g.default_tab_id = vim.api.nvim_get_current_tabpage()
-vim.g.matina_guess_dir = guessDir
+    local parent = vim.fn.fnamemodify(path, ":h")
+    if parent == path then
+      return false
+    end
 
-vim.g.unique_instance_id = string.format("%d-%d", os.time(), random)
+    return find_pubspec(parent)
+  end
+
+  return find_pubspec(vim.fn.getcwd())
+end
+
+-- Create an autocommand group
+vim.api.nvim_create_augroup("FlutterAutoQuit", { clear = true })
+
+-- Create the autocommand
+vim.api.nvim_create_autocmd("VimLeavePre", {
+  group = "FlutterAutoQuit",
+  callback = function()
+    if is_dart_project() then
+      vim.cmd("FlutterQuit")
+    end
+  end,
+  desc = "Automatically run FlutterQuit when exiting Neovim in a Dart project",
+})

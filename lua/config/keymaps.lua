@@ -3,6 +3,9 @@
 -- Add any additional keymaps here
 --#region
 --
+vim.keymap.del({ "n", "t" }, "<C-/>", {
+  desc = "Terminal (Root Dir)",
+})
 
 local map = vim.keymap.set
 
@@ -55,36 +58,6 @@ end, {
 --   silent = true,
 --   desc = "Format code",
 -- })
-
-local function getTermArgs()
-  local guessDir = vim.g.matina_guess_dir
-  local id = vim.g.unique_instance_id or vim.g.matina_guess_dir or "$HOME/Workspace/"
-
-  if vim.api.nvim_get_current_tabpage() ~= vim.g.default_tab_id then
-    guessDir = vim.fn.getcwd()
-  end
-
-  local isDir = vim.fn.isdirectory(guessDir) == 1
-  if not isDir then
-    guessDir = vim.fn.expand("$HOME/Workspace/")
-  end
-
-  return guessDir, id
-end
-
-local function toggleTerminal(id)
-  local dir, uniqueId = getTermArgs()
-
-  local opts = {
-    cwd = dir,
-    env = {
-      nvim_instance_id = uniqueId,
-      nvim_term_id = id,
-    },
-  }
-
-  Snacks.terminal(nil, opts)
-end
 
 if vim.g.neovide then
   vim.keymap.set({ "n", "i", "t", "v", "c" }, "<D-v>", function()
@@ -166,35 +139,31 @@ if vim.g.vscode then
     { desc = "Increase vscode view width" }
   )
 else
-  map("n", "<leader>fT", function()
-    toggleTerminal("2")
-  end, { desc = "Toggle Terminal Root Dir (Split)" })
-
-  map("n", "<c-\\>", function()
-    toggleTerminal("2")
-  end, { desc = "Open Terminal Root Dir (Split)" })
-
-  map("t", "<c-\\>", function()
-    toggleTerminal("2")
+  map({ "n", "t" }, "<c-\\>", function()
+    vim.g.matinaApi:toggleTerminal("2")
   end, { desc = "Open Terminal Root Dir (Split)" })
 
   map("n", "<leader>ft", function()
-    toggleTerminal("1")
+    vim.g.matinaApi:toggleTerminal("main")
   end, { desc = "Toggle Terminal Root Dir" })
 
-  map("n", "<C-/>", function()
-    toggleTerminal("1")
+  map("n", "<leader>fT", function()
+    vim.g.matinaApi:toggleTerminal("2")
+  end, { desc = "Toggle Terminal Root Dir (Split)" })
+
+  map({ "n", "t" }, "<C-/>", function()
+    vim.g.matinaApi:toggleTerminal("main")
   end, {
-    desc = "Open Terminal Root Dir",
+    desc = "Terminal (Root Dir)",
   })
 
-  map("t", "<C-/>", function()
-    toggleTerminal("1")
-  end, {
-    desc = "Hide Terminal Root Dir",
-  })
+  map("n", "<leader>bc", function()
+    vim.cmd([[silent! %s/\r/ /g]])
+  end, { desc = "清除当前buffer内 ^M 字符" })
 
-  map("t", "<C-t>", "<Cmd>close<CR>", { desc = "Hide Terminal" })
+  map("t", "<C-t>", function()
+    vim.g.matinaApi:hideAllTerm()
+  end, { desc = "Hide Terminal" })
 
   -- map("n", "<C-=>", "<Cmd>AvanteToggle<CR>", { desc = "Avante: toggle" })
   -- map("i", "<C-=>", "<Cmd>AvanteToggle<CR>", { desc = "Avante: toggle" })
@@ -205,6 +174,10 @@ else
   map({ "n", "x" }, "gh", function()
     vim.lsp.buf.hover()
   end, { desc = "Hover" })
+
+  map({ "n", "v" }, "<leader>fy", function()
+    vim.g.matinaApi:toggleTerminal("yazi", "zsh -l -c yazi")
+  end, { desc = "test yazi" })
 
   -- map("v", "<leader>ae", "<Cmd>AvanteEdit<CR>", { desc = "avante: edit selected block" })
   -- map("v", "<leader>aa", "<Cmd>AvanteAsk<CR>", { desc = "avante: ask selected block" })

@@ -1,30 +1,34 @@
 return {
   { "Kaiser-Yang/blink-cmp-avante" },
-  {
-    "saghen/blink.compat",
-    optional = true, -- make optional so it's only enabled if any extras need it
-    opts = {},
-    version = not vim.g.lazyvim_blink_main and "*",
-  },
-  { "hrsh7th/cmp-emoji", lazy = true },
-  { "hrsh7th/cmp-nvim-lsp", lazy = true },
+  -- { "hrsh7th/cmp-emoji", lazy = true },
+  -- { "hrsh7th/cmp-nvim-lsp", lazy = true },
   {
     "saghen/blink.cmp",
     opts = {
+      snippets = {
+        preset = "luasnip",
+      },
+      completion = {
+        ghost_text = {
+          enabled = false,
+        },
+        trigger = {
+          show_on_blocked_trigger_characters = { " ", "\n", "\t", "!" },
+        },
+      },
       sources = {
         -- adding any nvim-cmp sources here will enable them
         -- with blink.compat
-        compat = {
-          enabled = true, -- 启用兼容模式
-          sources = { -- 要桥接的 source 列表
-            { name = "emoji" }, -- 必须与插件注册的 name 一致
-            { name = "nvim_lsp" },
-          },
-        },
+        -- compat = {
+        --   enabled = true, -- 启用兼容模式
+        --   sources = { -- 要桥接的 source 列表
+        --     { name = "emoji" }, -- 必须与插件注册的 name 一致
+        --   },
+        -- },
         per_filetype = {
           lua = { inherit_defaults = true, "lazydev" },
         },
-        default = { "lsp", "path", "buffer", "snippets", "copilot" },
+        default = { "avante", "lsp", "path", "buffer", "snippets", "copilot" },
         providers = {
           lazydev = {
             name = "LazyDev",
@@ -40,25 +44,24 @@ return {
           --
           copilot = {
             name = "copilot",
-            -- module = "blink-cmp-copilot",
             kind = "Copilot",
             score_offset = -100,
             async = true,
           },
-          -- avante = {
-          --   module = "blink-cmp-avante",
-          --   name = "Avante",
-          --   opts = {
-          --     -- options for blink-cmp-avante
-          --   },
-          -- },
+          avante = {
+            module = "blink-cmp-avante",
+            name = "Avante",
+            opts = {
+              -- options for blink-cmp-avante
+            },
+          },
         },
       },
       keymap = {
         preset = "super-tab",
         ["<c-y>"] = { "select_and_accept" },
-        ["<c-e>"] = { "cancel" },
-        ["<cr>"] = { "cancel", "fallback" },
+        ["<C-e>"] = { "cancel", "fallback" },
+        ["<CR>"] = { "accept", "fallback" },
         ["<c-x>"] = { "show", "show_documentation", "hide_documentation" },
       },
     },

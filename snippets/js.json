@@ -10,7 +10,7 @@
     "description": "Generate a JSDoc comment block"
   },
   "React Prop": {
-    "prefix": "prop",
+    "prefix": "prop~",
     "body": ["props: { $1 }"],
     "description": "Set Component Prop"
   }

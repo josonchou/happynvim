@@ -56,37 +56,12 @@ return {
         },
         vue_ls = {},
         vtsls = {
-          -- filetypes = {
-          --   "javascript",
-          --   "javascriptreact",
-          --   "javascript.jsx",
-          --   "typescript",
-          --   "typescriptreact",
-          --   "typescript.tsx",
-          --   "vue",
-          -- },
           settings = {
-            -- complete_function_calls = true,
-            -- vtsls = {
-            --   enableMoveToFileCodeAction = true,
-            --   autoUseWorkspaceTsdk = true,
-            --   experimental = {
-            --     maxInlayHintLength = 30,
-            --     completion = {
-            --       enableServerSideFuzzyMatch = true,
-            --     },
-            --   },
-            -- },
             typescript = {
-              -- updateImportsOnFileMove = { enabled = "always" },
-              -- suggest = {
-              --   completeFunctionCalls = true,
-              -- },
               inlayHints = {
                 enumMemberValues = { enabled = false },
                 functionLikeReturnTypes = { enabled = false },
                 parameterNames = { enabled = false },
-                -- parameterNames = { enabled = false },
                 parameterTypes = { enabled = false },
                 propertyDeclarationTypes = { enabled = false },
                 variableTypes = { enabled = false },
@@ -147,18 +122,6 @@ return {
             },
           },
         },
-        -- eslint = {
-        --   settings = {
-        --     workingDirectory = { mode = "auto" },
-        --     format = vim.g.lazyvim_eslint_auto_format,
-        --     -- validate = {
-        --     --   "javascript",
-        --     --   "javascriptreact",
-        --     --   "typescriptreact",
-        --     --   "typescript",
-        --     -- },
-        --   },
-        -- },
         cssls = {
           filetypes = {
             "css",
@@ -167,7 +130,7 @@ return {
           },
           settings = {
             css = {
-              validate = true,
+              validate = false,
             },
             less = {
               validate = true,

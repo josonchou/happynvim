@@ -4,135 +4,107 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a LazyVim-based Neovim configuration with extensive customization for modern development workflows. The configuration is built on LazyVim as a foundation and adds numerous plugins and customizations for enhanced productivity.
+这是一个基于LazyVim构建的Neovim配置，针对现代开发工作流程进行了广泛定制。它以LazyVim为基础框架，添加了众多插件和自定义设置以增强生产力。
 
-## Architecture
+## 架构与结构
 
-### Core Structure
-- **`init.lua`**: Entry point that loads LazyVim and custom plugins
-- **`lua/config/`**: Core configuration files
-  - `lazy.lua`: Lazy.nvim plugin manager setup
-  - `keymaps.lua`: Custom key mappings and shortcuts
-  - `options.lua`: Neovim options and global variables
-  - `autocmds.lua`: Auto commands and filetype-specific settings
-- **`lua/plugins/`**: Custom plugin configurations
-  - `happyvim.lua`: Main plugin configuration with extensive customizations
-  - `my_mcphub.lua`: MCP Hub configuration for AI tools
-  - `flutter-tools.lua`: Flutter development setup
-  - `noice.nvim`: UI enhancements and notification routing
-  - `themes.lua`: Theme configurations
-  - `autosave.lua`: Auto-save functionality
+### 核心结构
+- **`init.lua`**: 配置入口点，加载LazyVim和自定义插件
+- **`lua/config/`**: 核心配置文件目录
+  - `lazy.lua`: Lazy.nvim插件管理器的设置
+  - `keymaps.lua`: 自定义键位映射和快捷方式
+  - `options.lua`: Neovim选项和全局变量设置
+  - `autocmds.lua`: 自动命令和文件类型特定设置
+- **`lua/plugins/`**: 自定义插件配置目录
+  - `happyvim.lua`: 主插件配置，包含大量自定义设置
+  - `ai.lua`: AI相关插件配置
+  - `my_mcphub.lua`: MCP Hub配置用于AI工具
+  - `flutter-tools.lua`: Flutter开发环境设置
+  - `nvim-lspconfig.lua`: LSP服务器配置
+  - `noice.nvim`: UI增强和通知路由
+  - `themes.lua`: 主题配置
 
-### Plugin Management
-- Uses Lazy.nvim for plugin management
-- Custom plugins are loaded from `lua/plugins/` directory
-- LazyVim provides the foundation with additional extras enabled
+### 插件管理
+- 使用 **Lazy.nvim** 作为插件管理器
+- 自定义插件从 `lua/plugins/` 目录加载
+- LazyVim提供基础框架，额外启用了一些增强功能
+- `lazy-lock.json` 包含插件的固定版本信息
 
-## Key Features
+## 关键功能领域
 
-### AI Integration
-- **Avante.nvim**: AI chat and code assistance with Claude Code integration
-- **MCP Hub**: Model Context Protocol server management for AI tools
-- **Copilot**: GitHub Copilot integration with custom configuration
-- **Blink.cmp**: Enhanced completion framework with AI sources
+### AI集成
+- **Avante.nvim**: AI聊天和代码辅助，支持Claude Code集成
+- **MCP Hub**: Model Context Protocol服务器管理，用于AI工具
+- **Copilot**: GitHub Copilot集成，带有自定义配置
+- **Blink.cmp**: 增强的自动补全框架，带有AI来源
 
-### Development Support
-- **Flutter Tools**: Full Flutter development support with FVM
-- **TypeScript/JavaScript**: Enhanced LSP configuration with vtsls
-- **Go**: Comprehensive Go development with gopls
-- **Dart**: Dart language server with Flutter integration
-- **Multiple Languages**: Support for Python, Rust, PHP, Vue, and more
+### 开发支持
+- **Flutter开发**: 完整的Flutter开发支持，包括FVM
+- **TypeScript/JavaScript**: 使用vtsls的增强LSP配置
+- **Go开发**: 使用gopls的综合Go开发支持
+- **Dart开发**: 带有Flutter集成的Dart语言服务器
+- **多语言支持**: Python, Rust, PHP, Vue等
 
-### UI/UX Enhancements
-- **Snacks.nvim**: Custom picker and dashboard
-- **Noice.nvim**: Enhanced notifications and UI components
-- **Bufferline.nvim**: Tab and buffer management
-- **Tokyo Night**: Default color scheme with transparent background
+### 代码质量与格式化
+- **Conform.nvim**: 使用Prettier和ESLint进行格式化
+- **ESLint**: 对JavaScript/TypeScript启用自动格式化
+- **LSP**: 综合的语言服务器协议设置
+- **按键映射**: `<M-F>` 用于代码格式化，自动执行ESLint修复
 
-### Code Quality
-- **Conform.nvim**: Formatting with Prettier and ESLint integration
-- **ESLint**: Auto-formatting enabled for JavaScript/TypeScript
-- **Treesitter**: Enhanced syntax highlighting and parsing
-- **LSP**: Comprehensive language server protocol setup
+## 核心命令与工作流
 
-## Key Mappings
+### 插件管理命令
+```bash
+:Lazy      # 打开Lazy.nvim插件管理器
+:Lazy sync # 更新插件并同步配置
+:Lazy clean# 清理未使用的插件
+```
 
-### Navigation
-- `<leader>ft` / `<C-/>`: Toggle terminal in current directory
-- `<leader>fT` / `<C-\>`: Toggle terminal in split
-- `<C-=>`: Toggle Avante AI chat
-- `<M-F>`: Format code with ESLint integration
+### 开发相关命令
+```bash
+:EslintFixAll      # 执行ESLint修复（仅JavaScript/TypeScript）
+:Format            # 使用Conform.nvim格式化当前文件
+:Neotest run       # 运行当前测试文件
+:Neotest run file  # 运行当前文件的所有测试
+:Neotest attach    # 附加到测试会话
+```
 
-### Development
-- `g.`: Open code actions menu
-- `gh`: Show LSP hover documentation
-- `<leader>ad`: Clear Avante chat history
-- `<leader>ae` / `<leader>aa`: Avante edit/ask on selected text
+### AI工具命令
+```bash
+<C-=>               # 切换Avante AI聊天界面
+<leader>ae          # 对选中的文本进行AI编辑
+<leader>aa          # 对选中的文本进行AI询问
+<leader>ad          # 清除Avante聊天历史
+```
 
-### System Integration
-- `<D-s>`: Save file (macOS)
-- `<D-a>`: Select all
-- `<D-c>` / `<D-x>`: Copy/cut to system clipboard
-- `jj`: Quick escape from insert mode
+## 配置特点与注意事项
 
-## Configuration Details
+### 主题与UI
+- 默认使用 **Tokyo Night** 配色方案，带有透明背景
+- 自定义仪表板头部，包含ASCII艺术
+- 透明侧边栏和浮动窗口
 
-### LSP Servers
-- **vtsls**: TypeScript/JavaScript with enhanced features
-- **gopls**: Go with extensive hinting and analysis
-- **dartls**: Dart/Flutter with FVM support
-- **eslint**: Auto-formatting and validation
-- **cssls**: CSS/LESS/SCSS support
+### 文件类型设置
+- 大多数语言使用2空格缩进 (Lua, JavaScript, TypeScript, Dart)
+- 通用文件使用4空格缩进
+- 启用智能缩进和自动缩进
 
-### Formatting
-- Auto-formatting enabled for multiple filetypes
-- ESLint integration for JavaScript/TypeScript
-- Prettier as primary formatter
-- Custom formatting triggers and keymaps
+### LSP服务器配置
+核心LSP服务器在 `lua/plugins/nvim-lspconfig.lua` 中配置，包括:
+- vtsls (TypeScript/JavaScript)
+- gopls (Go)
+- dartls (Dart/Flutter)
+- eslint (代码风格检查)
 
-### Terminal Integration
-- Automatic directory switching based on project
-- Multiple terminal instances with unique IDs
-- Custom environment variables for terminal sessions
+### 开发工作流
+1. 打开Neovim - 配置自动加载
+2. 终端自动切换到工作区目录
+3. LSP服务器为支持的文件类型自动启动
+4. 可通过 `<C-=>` 访问AI工具
 
-### AI Tools Configuration
-- Claude Code as primary AI provider
-- DeepSeek as alternative provider
-- MCP Hub for tool integration
-- Custom system prompts and tool management
+## 自定义建议
 
-## Development Workflow
-
-### Starting Development
-1. Open Neovim - configuration auto-loads
-2. Terminal automatically switches to workspace directory
-3. LSP servers auto-start for supported filetypes
-4. AI tools available via `<C-=>` for Avante chat
-
-### Code Formatting
-- Use `<M-F>` for comprehensive formatting (ESLint + Prettier)
-- Auto-format on save for supported filetypes
-- Manual formatting available via LazyVim commands
-
-### AI Assistance
-- Toggle Avante with `<C-=>`
-- Use selection-based editing with `<leader>ae`
-- Access codebase-aware AI assistance
-- MCP tools available through Avante interface
-
-## Customization Notes
-
-### Theme
-- Tokyo Night with transparent background
-- Custom dashboard header with ASCII art
-- Transparent sidebars and floating windows
-
-### Filetype Settings
-- 2-space indentation for most languages (Lua, JavaScript, TypeScript, Dart)
-- 4-space indentation for general files
-- Smart indentation and auto-indent enabled
-
-### Environment Variables
-- Automatic workspace directory detection
-- Unique instance IDs for terminal sessions
-- Project root detection via `.git`, `pubspec.yaml`, etc.
+- 若要添加新插件，请在 `lua/plugins/` 目录下创建新的Lua文件
+- 若要修改键位映射，编辑 `lua/config/keymaps.lua`
+- 若要调整Neovim选项，编辑 `lua/config/options.lua`
+- 若要添加自动命令，编辑 `lua/config/autocmds.lua`
