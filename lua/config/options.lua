@@ -20,21 +20,27 @@ vim.opt.laststatus = 3
 vim.g.root_spec = { { ".git", "lua" }, "lsp", "cwd" }
 
 if vim.g.neovide then
+  vim.g.neovide_cursor_animation_length = 0.08
+  vim.g.neovide_cursor_trail_length = 0.5
+  vim.g.neovide_cursor_antialiasing = true
+  -- vim.g.neovide_refresh_rate = 144  -- 按你的显示器刷新率
+  vim.g.neovide_no_idle = true
+  vim.g.neovide_fullscreen = false
+  vim.g.neovide_floating_blur_amount_x = 2.0
+  vim.g.neovide_floating_blur_amount_y = 2.0
+  vim.g.neovide_scroll_animation_length = 0.15
+
   vim.g.neovide_padding_top = 20
   -- g:neovide_opacity should be 0 if you want to unify transparency of content and title bar.
   vim.g.neovide_theme = "auto"
-  vim.g.neovide_opacity = 0.8
+  vim.g.neovide_opacity = 0.95
   vim.g.neovide_normal_opacity = 0.8
-
   vim.g.neovide_window_blurred = true
 
-  vim.g.neovide_floating_blur_amount_x = 2.0
-  vim.g.neovide_floating_blur_amount_y = 2.0
-
-  vim.g.neovide_floating_shadow = true
-  vim.g.neovide_floating_z_height = 10
-  vim.g.neovide_light_angle_degrees = 45
-  vim.g.neovide_light_radius = 5
+  -- vim.g.neovide_floating_shadow = true
+  -- vim.g.neovide_floating_z_height = 10
+  -- vim.g.neovide_light_angle_degrees = 45
+  -- vim.g.neovide_light_radius = 5
 else
 end
 

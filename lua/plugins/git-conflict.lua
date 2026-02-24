@@ -2,14 +2,14 @@ return {
   "akinsho/git-conflict.nvim",
   lazy = false,
   opts = {
-    default_mappings = {
-      ours = "<leader>ho",
-      theirs = "<leader>ht",
-      none = "<leader>h0",
-      both = "<leader>hb",
-      next = "]x",
-      prev = "[x",
-    },
+    -- default_mappings = {
+    --   ours = "o",
+    --   theirs = "t",
+    --   none = "<leader>h0",
+    --   both = "<leader>hb",
+    --   next = "]x",
+    --   prev = "[x",
+    -- },
   },
   keys = {
     {
