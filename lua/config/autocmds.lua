@@ -94,13 +94,9 @@ local function createMatinaApi()
   end
 
   function matinaApi:getTermArgs()
-    local tabId = vim.api.nvim_get_current_tabpage()
+    local tabId = "term"
     local guessDir = state.rootDir
     local id = state.superCodeId or state.rootDir or "$HOME/Workspace/"
-
-    if tabId ~= state.defaultTabId then
-      guessDir = vim.fn.getcwd()
-    end
 
     local isDir = vim.fn.isdirectory(guessDir) == 1
     if not isDir then
@@ -184,12 +180,60 @@ local function createMatinaApi()
 end
 
 local matinaApi, matinaState = createMatinaApi()
+local is_dart_project_cached = nil
 
 if vim.g.vscode then
 else
   vim.cmd("cd " .. matinaState.rootDir)
+  -- 缓存 Dart 项目检测结果
+
+  local function check_dart_project()
+    -- 向上递归查找 pubspec.yaml（从当前目录到根目录）
+    local path = vim.fn.getcwd()
+    while true do
+      -- 使用 glob 检查当前目录
+      local pubspec = vim.fn.glob(path .. "/pubspec.yaml")
+      if pubspec ~= "" then
+        return true
+      end
+      -- 获取父目录
+      local parent = vim.fn.fnamemodify(path, ":h")
+      if parent == path then
+        break
+      end
+      path = parent
+    end
+    return false
+  end
+
+  local function is_dart_project()
+    return is_dart_project_cached
+  end
+
+  -- Create an autocommand group
+  vim.api.nvim_create_augroup("MatinaApi", { clear = true })
+
+  -- VimEnter 时预检查并缓存结果
+  -- vim.api.nvim_create_autocmd("VimEnter", {
+  --   group = "FlutterAutoQuit",
+  --   callback = function()
+  --     is_dart_project_cached = check_dart_project()
+  --   end,
+  -- })
+
+  -- 退出时直接使用缓存结果
+  vim.api.nvim_create_autocmd("VimLeavePre", {
+    group = "MatinaApi",
+    callback = function()
+      if is_dart_project() then
+        vim.cmd("FlutterQuit")
+      end
+    end,
+    desc = "Automatically run FlutterQuit when exiting Neovim in a Dart project",
+  })
 
   vim.api.nvim_create_autocmd("DirChanged", {
+    group = "MatinaApi",
     pattern = "*",
     callback = function(args)
       local scope = args.match
@@ -198,59 +242,28 @@ else
       if scope == "global" then
         matinaApi:setRootDir(new_dir)
       end
+      is_dart_project_cached = check_dart_project()
     end,
   })
 
-  vim.api.nvim_create_autocmd("TabNew", {
-    pattern = "*",
-    callback = function(args)
-      local file_path = args.file or args.match
-      -- -- 获取当前标签页的窗口 ID
-      -- local win_id = vim.api.nvim_tabpage_get_win(0)
-      -- local buf_id = vim.api.nvim_win_get_buf(win_id)
-      -- local file_path = vim.api.nvim_buf_get_name(buf_id)
-      -- print(vim.inspect(args))
-      --
-      -- vim.notify("After TabNew" .. args.data.win_id)
-
-      -- 检查路径是否为目录（如 ~/dir）
-      if vim.fn.isdirectory(file_path) == 1 then
-        vim.cmd("tcd " .. file_path) -- 切换到目标目录
-      else
-        vim.cmd("tcd " .. matinaState.rootDir) -- 切换到目标目录
-      end
-    end,
-  })
+  -- vim.api.nvim_create_autocmd("TabNew", {
+  --   pattern = "*",
+  --   callback = function(args)
+  --     local file_path = args.file or args.match
+  --     -- -- 获取当前标签页的窗口 ID
+  --     -- local win_id = vim.api.nvim_tabpage_get_win(0)
+  --     -- local buf_id = vim.api.nvim_win_get_buf(win_id)
+  --     -- local file_path = vim.api.nvim_buf_get_name(buf_id)
+  --     -- print(vim.inspect(args))
+  --     --
+  --     -- vim.notify("After TabNew" .. args.data.win_id)
+  --
+  --     -- 检查路径是否为目录（如 ~/dir）
+  --     if vim.fn.isdirectory(file_path) == 1 then
+  --       vim.cmd("tcd " .. file_path) -- 切换到目标目录
+  --     else
+  --       vim.cmd("tcd " .. matinaState.rootDir) -- 切换到目标目录
+  --     end
+  --   end,
+  -- })
 end
-
-local function is_dart_project()
-  -- Check for pubspec.yaml in the current directory or parent directories
-  local function find_pubspec(path)
-    if vim.fn.filereadable(path .. "/pubspec.yaml") == 1 then
-      return true
-    end
-
-    local parent = vim.fn.fnamemodify(path, ":h")
-    if parent == path then
-      return false
-    end
-
-    return find_pubspec(parent)
-  end
-
-  return find_pubspec(vim.fn.getcwd())
-end
-
--- Create an autocommand group
-vim.api.nvim_create_augroup("FlutterAutoQuit", { clear = true })
-
--- Create the autocommand
-vim.api.nvim_create_autocmd("VimLeavePre", {
-  group = "FlutterAutoQuit",
-  callback = function()
-    if is_dart_project() then
-      vim.cmd("FlutterQuit")
-    end
-  end,
-  desc = "Automatically run FlutterQuit when exiting Neovim in a Dart project",
-})

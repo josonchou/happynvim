@@ -9,6 +9,16 @@ return {
       },
       -- make sure mason installs the server
       servers = {
+        cssmodules_ls = {
+          init_options = {
+            camelCase = false,
+          },
+          -- 核心配置：禁止此 LSP 提供格式化能力
+          on_attach = function(client)
+            client.server_capabilities.documentFormattingProvider = false
+            client.server_capabilities.documentRangeFormattingProvider = false
+          end,
+        },
         dartls = {
           enabled = false,
           init_options = {

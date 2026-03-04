@@ -1,5 +1,9 @@
 return {
   "akinsho/git-conflict.nvim",
+  -- 当 vim.g.vscode 为 true 时，cond 为 false，插件不加载
+  cond = function()
+    return not vim.g.vscode
+  end,
   lazy = false,
   opts = {
     -- default_mappings = {

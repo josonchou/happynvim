@@ -49,6 +49,15 @@ vim.opt.titlestring = "SuperCoder: %{getcwd()}"
 
 vim.opt.fixendofline = true
 
+vim.filetype.add({
+  pattern = {
+    [".*%.module%.css"] = "css",
+    [".*%.module%.scss"] = "scss",
+    [".*%.module%.sass"] = "sass",
+    [".*%.module%.less"] = "less",
+  },
+})
+
 -- function _G.statusLine()
 --   return vim.g.flutter_tools_decorations.device
 -- end

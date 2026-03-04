@@ -59,6 +59,18 @@ return {
       },
       keymap = {
         preset = "super-tab",
+        -- ["<Tab>"] = {
+        --   function(cmp)
+        --     if cmp.snippet_active() then
+        --       return cmp.accept()
+        --     else
+        --       return require("sidekick").nes_jump_or_apply()
+        --       -- return cmp.select_and_accept()
+        --     end
+        --   end,
+        --   "snippet_forward",
+        --   "fallback",
+        -- },
         ["<c-y>"] = { "select_and_accept" },
         ["<C-e>"] = { "cancel", "fallback" },
         ["<CR>"] = { "accept", "fallback" },
