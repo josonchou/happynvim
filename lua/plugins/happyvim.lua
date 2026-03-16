@@ -129,6 +129,18 @@ return {
     },
   },
   -- {
+  --   "gbprod/yanky.nvim",
+  --   opts = {
+  --     ring = {
+  --       ignore_registers = { "_" },
+  --     },
+  --     system_clipboard = {
+  --       sync_with_ring = true,
+  --       clipboard_register = "0",
+  --     },
+  --   },
+  -- },
+  -- {
   --   "sphamba/smear-cursor.nvim",
   --   event = "VeryLazy",
   --   cond = vim.g.neovide == nil and vim.env.TERM_PROGRAM ~= "ghostty",

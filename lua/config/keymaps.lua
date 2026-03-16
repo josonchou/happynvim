@@ -40,11 +40,11 @@ map({ "x", "v" }, "<D-x>", '"+d')
 map({ "n", "i", "t", "x", "v" }, "<M-F>", function()
   LazyVim.format({ force = true })
 
-  vim.defer_fn(function()
-    if vim.fn.exists(":EslintFixAll") > 0 then
-      vim.cmd("EslintFixAll") -- 再执行 ESLint 修复
-    end
-  end, 300)
+  -- vim.defer_fn(function()
+  --   if vim.fn.exists(":EslintFixAll") > 0 then
+  --     vim.cmd("EslintFixAll") -- 再执行 ESLint 修复
+  --   end
+  -- end, 300)
 end, {
   noremap = true,
   silent = true,
@@ -139,7 +139,7 @@ if vim.g.vscode then
     { desc = "Increase vscode view width" }
   )
 else
-  map({ "n", "t" }, "<c-\\>", function()
+  map({ "n", "t", "x", "i" }, "<c-\\>", function()
     vim.g.matinaApi:toggleTerminal("2")
   end, { desc = "Open Terminal Root Dir (Split)" })
 
@@ -152,7 +152,7 @@ else
   end, { desc = "Toggle Terminal Root Dir (Split)" })
 
   map({ "n", "t" }, "<C-/>", function()
-    vim.g.matinaApi:toggleTerminal("main")
+    -- vim.g.matinaApi:toggleTerminal("main")
   end, {
     desc = "Terminal (Root Dir)",
   })
@@ -161,8 +161,9 @@ else
     vim.cmd([[silent! %s/\r/ /g]])
   end, { desc = "清除当前buffer内 ^M 字符" })
 
-  map("t", "<C-t>", function()
-    vim.g.matinaApi:hideAllTerm()
+  map({ "n", "t", "x", "i" }, "<C-t>", function()
+    vim.g.matinaApi:toggleTerminal("main")
+    -- vim.g.matinaApi:hideAllTerm()
   end, { desc = "Hide Terminal" })
 
   -- map("n", "<C-=>", "<Cmd>AvanteToggle<CR>", { desc = "Avante: toggle" })

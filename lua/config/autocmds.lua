@@ -48,14 +48,10 @@ vim.api.nvim_create_autocmd("FileType", {
     map({ "n", "i", "t", "x", "v" }, "<M-F>", function()
       LazyVim.format({ force = true })
       LazyVim.lsp.action["source.fixAll.ts"]()
-      -- 检查 EslintFixAll 命令是否存在
-      -- if vim.fn.exists(":EslintFixAll") > 0 then
-      --   vim.cmd("EslintFixAll") -- 再执行 ESLint 修复
-      -- end
 
       vim.defer_fn(function()
-        if vim.fn.exists(":EslintFixAll") > 0 then
-          vim.cmd("EslintFixAll") -- 再执行 ESLint 修复
+        if vim.fn.exists(":LspEslintFixAll") > 0 then
+          vim.cmd("LspEslintFixAll") -- 再执行 ESLint 修复
         end
       end, 300)
     end, {
